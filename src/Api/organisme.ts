@@ -95,7 +95,7 @@ export const getOrganisme = async (id: number) => {
 
 export const updateOrganisme = async (id: number, data: Organisme) => {
     try {
-        const response = await api.put(`/organisme/store/${id}`, data);
+        const response = await api.put(`/organisme/${id}`, data);
         return response.data.datas;
     } catch (error) {
         console.error("Erreur lors de la mise à jour de l'organisme:", error);

@@ -5,7 +5,7 @@ interface Projet {
     id?: number;
     title: string;
     organisme_id: number,
-    filePath?: File,
+    filePath?: any,
     etat?: boolean,
     avoter?: boolean,
     cloturevoter?: Date,

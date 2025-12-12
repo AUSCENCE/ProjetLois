@@ -20,9 +20,13 @@ import { ScrollToTop } from "./components/common/ScrollToTop";
 import Home from "./pages/Dashboard/Home";
 import { AuthProvider } from "./context/AuthContext";
 import { PrivateRoute } from "./components/PrivateRoute";
-import Organisme from "./pages/Organisme/Organisme";
+import { PublicRoute } from "./components/PublicRoute";
+import Organisme from "./pages/Organisme";
+import CreateOrganisme from "./pages/Organisme/create";
+import EditOrganisme from "./pages/Organisme/edit";
 import Projets from "./pages/Projets";
 import CreatedProjet from "./pages/Projets/create";
+import EditProjet from "./pages/Projets/edit";
 import ShowProjet from "./pages/Projets/show";
 
 export default function App() {
@@ -38,11 +42,18 @@ export default function App() {
 
               {/* Others Page */}
               <Route path="/profile" element={<UserProfiles />} />
+
+              {/* Projets - Routes spécifiques AVANT les routes dynamiques */}
               <Route path="/projets" element={<Projets />} />
-              <Route path="/projetsave" element={<CreatedProjet />} />
-              <Route path="/projetedit" element={<Organisme />} />
-              <Route path="/projetvote" element={<ShowProjet />} />
+              <Route path="/projets/create" element={<CreatedProjet />} />
+              <Route path="/projets/edit/:id" element={<EditProjet />} />
+              <Route path="/projets/:id" element={<ShowProjet />} />
+
+              {/* Organismes - Routes spécifiques AVANT les routes dynamiques */}
               <Route path="/organisme" element={<Organisme />} />
+              <Route path="/organisme/create" element={<CreateOrganisme />} />
+              <Route path="/organisme/edit/:id" element={<EditOrganisme />} />
+
               <Route path="/blank" element={<Blank />} />
 
               {/* Forms */}
@@ -64,8 +75,8 @@ export default function App() {
               <Route path="/bar-chart" element={<BarChart />} />
             </Route>
             {/* Auth Layout */}
-            <Route path="/signin" element={<SignIn />} />
-            <Route path="/signup" element={<SignUp />} />
+            <Route path="/signin" element={<PublicRoute><SignIn /></PublicRoute>} />
+            <Route path="/signup" element={<PublicRoute><SignUp /></PublicRoute>} />
 
             {/* Fallback Route */}
             <Route path="*" element={<NotFound />} />

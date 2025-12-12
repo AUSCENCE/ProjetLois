@@ -1,6 +1,5 @@
 // Importation de axios
 import axios from 'axios';
-import Organisme from '../Types/Organisme';
 //import Swal from 'sweetalert2';
 
 // URL de base pour les API
@@ -60,33 +59,34 @@ api.interceptors.response.use(
 export const ajoutProject = async (data: Projet) => {
     try {
         const formData = new FormData();
+
         formData.append('title', data.title);
         formData.append('organisme_id', String(data.organisme_id));
 
-        if (data.filePath) {
+        if (data.filePath instanceof File) {
             formData.append('filePath', data.filePath);
         }
 
         if (data.cloturevoter) {
-            // Ensure date is formatted correctly if needed, or send as ISO string
             formData.append('cloturevoter', data.cloturevoter.toISOString().split('T')[0]);
         }
 
         const response = await api.post("/projet/store", formData, {
             headers: {
-                'Content-Type': 'multipart/form-data',
-            },
+                'Content-Type': undefined,
+            }
         });
-        console.log(response.data.datas);
+
+        console.log("API Response:", response.data);
 
         return response.data.datas;
 
     } catch (error) {
-        console.error(error);
-        throw error; // Re-throw error to handle it in the component
+        console.error('Erreur lors de l\'ajout du projet:', error);
+        throw error;
     }
-
 }
+
 
 export const getProjects = async () => {
     try {
@@ -101,7 +101,7 @@ export const getProjects = async () => {
 
 export const getProject = async (id: number) => {
     try {
-        const response = await api.get(`/projet/${id}`);
+        const response = await api.get(`/projet/show/${id}`);
         return response.data.datas;
     } catch (error) {
         console.error("Erreur lors de la récupération de l'organisme:", error);
@@ -111,20 +111,50 @@ export const getProject = async (id: number) => {
 
 export const updateProject = async (id: number, data: Projet) => {
     try {
-        const response = await api.put(`/projet/store/${id}`, data);
+        const formData = new FormData();
+
+        formData.append('title', data.title);
+        formData.append('organisme_id', String(data.organisme_id));
+
+        if (data.filePath instanceof File) {
+            formData.append('filePath', data.filePath);
+        }
+
+        if (data.cloturevoter) {
+            formData.append('cloturevoter', data.cloturevoter.toISOString().split('T')[0]);
+        }
+
+        const response = await api.put(`/projet/update/${id}`, formData, {
+            headers: {
+                'Content-Type': 'multipart/form-data',
+            }
+        });
         return response.data.datas;
     } catch (error) {
-        console.error("Erreur lors de la mise à jour de l'organisme:", error);
+        console.error("Erreur lors de la mise à jour du projet:", error);
         throw error;
     }
 }
 
 export const deleteProject = async (id: number) => {
     try {
-        const response = await api.delete(`/projet/${id}`);
+        const response = await api.delete(`/projet/delete/${id}`);
         return response.data.datas;
     } catch (error) {
-        console.error("Erreur lors de la suppression de l'organisme:", error);
+        console.error("Erreur lors de la suppression du projet:", error);
+        throw error;
+    }
+}
+
+export const voteProject = async (id: number, vote: 'VALIDER' | 'REJETER', commentaire?: string) => {
+    try {
+        const response = await api.post(`/projet/voter/${id}`, {
+            vote,
+            commentaire
+        });
+        return response.data.datas;
+    } catch (error) {
+        console.error('Erreur lors du vote:', error);
         throw error;
     }
 }

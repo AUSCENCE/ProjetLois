@@ -26,7 +26,7 @@ const DropzoneComponent: React.FC<DropzoneComponentProps> = ({ onChange, value }
     // <ComponentCard title="Importer le fichier du Projet de Lois"> 
     <div className="">
       <div className="transition border border-gray-300 border-dashed cursor-pointer dark:hover:border-brand-500 dark:border-gray-700 rounded-xl hover:border-brand-500">
-        <form
+        <div
           {...getRootProps()}
           className={`dropzone rounded-xl   border-dashed border-gray-300 p-7 lg:p-10
           ${isDragActive
@@ -37,7 +37,7 @@ const DropzoneComponent: React.FC<DropzoneComponentProps> = ({ onChange, value }
           id="demo-upload"
         >
           {/* Hidden Input */}
-          <input type="file" {...getInputProps()} />
+          <input  {...getInputProps()} accept=".pdf, application/pdf" />
 
           <div className="dz-message flex flex-col items-center m-0!">
             {/* Icon Container */}
@@ -68,7 +68,7 @@ const DropzoneComponent: React.FC<DropzoneComponentProps> = ({ onChange, value }
               {value ? value.name : "Drag and drop your PDF here or browse"}
             </span>
           </div>
-        </form>
+        </div>
       </div>
     </div>
     // </ComponentCard>

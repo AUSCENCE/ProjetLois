@@ -82,8 +82,22 @@ export const login = async (
  * 3. GET AUTHENTICATED USER
  * ======================================================= */
 export const fetchUser = async (): Promise<User> => {
-  const response = await api.get("/api/user/me");
-  return response.data.datas.user;
+  try {
+    const response = await api.get("/api/user/me");
+    console.log("fetchUser response:", response.data);
+    // Check if the structure matches expectation
+    if (response.data.datas && response.data.datas.user) {
+      return response.data.datas.user;
+    } else if (response.data.user) {
+      return response.data.user;
+    } else {
+      // Fallback or assume response.data is the user if it has an id
+      return response.data;
+    }
+  } catch (error) {
+    console.error("fetchUser error:", error);
+    throw error;
+  }
 };
 
 /* =======================================================

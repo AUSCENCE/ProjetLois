@@ -3,7 +3,6 @@ import ComponentCard from "../../components/common/ComponentCard";
 import PageBreadcrumb from "../../components/common/PageBreadCrumb";
 import PageMeta from "../../components/common/PageMeta";
 import DatePicker from "../../components/form/date-picker";
-import DropzoneComponent from "../../components/form/form-elements/DropZone";
 import Input from "../../components/form/input/InputField";
 import Label from "../../components/form/Label";
 import Select from "../../components/form/Select";
@@ -12,14 +11,15 @@ import Button from "../../components/ui/button/Button";
 import { useEffect, useMemo, useState } from "react";
 import OrganismeType from "../../Types/Organisme";
 import ProjetType from "../../Types/Projet";
-import { ajoutProject } from "../../Api/project";
-import { useNavigate } from "react-router";
+import { getProject, updateProject } from "../../Api/project";
+import { useNavigate, useParams } from "react-router";
 import Form from "../../components/form/Form";
 import FileInput from "../../components/form/input/FileInput";
 
-export default function CreatedProjet() {
+export default function EditProjet() {
     const [organismes, setOrganismes] = useState<OrganismeType[]>([]);
     const navigate = useNavigate();
+    const { id } = useParams<{ id: string }>();
     const [projet, setProjet] = useState<ProjetType>({
         title: '',
         organisme_id: 0,
@@ -27,28 +27,38 @@ export default function CreatedProjet() {
         cloturevoter: undefined,
     });
     const [isLoading, setIsLoading] = useState(false);
+    const [isLoadingData, setIsLoadingData] = useState(true);
     const [error, setError] = useState<string | null>(null);
     const [success, setSuccess] = useState<string | null>(null);
 
-
-
     useEffect(() => {
-        const fetchOrganismes = async () => {
+        const fetchData = async () => {
             try {
-                const data = await getOrganismes();
-                if (Array.isArray(data.data)) {
-                    setOrganismes(data.data);
-                } else {
-                    console.error("Fetched data is not an array:", data.data);
-                    setOrganismes([]);
+                // Fetch organismes
+                const orgData = await getOrganismes();
+                if (Array.isArray(orgData.data)) {
+                    setOrganismes(orgData.data);
+                }
+
+                // Fetch project data
+                if (id) {
+                    const projectData = await getProject(Number(id));
+                    setProjet({
+                        title: projectData.title || '',
+                        organisme_id: projectData.organisme_id || 0,
+                        filePath: projectData.filePath,
+                        cloturevoter: projectData.cloturevoter ? new Date(projectData.cloturevoter) : undefined,
+                    });
                 }
             } catch (error) {
-                console.error("Failed to fetch organismes", error);
-                setOrganismes([]);
+                console.error("Failed to fetch data", error);
+                setError("Erreur lors du chargement des données");
+            } finally {
+                setIsLoadingData(false);
             }
         };
-        fetchOrganismes();
-    }, []);
+        fetchData();
+    }, [id]);
 
     const options = useMemo(() => {
         if (!Array.isArray(organismes)) return [];
@@ -60,17 +70,11 @@ export default function CreatedProjet() {
 
     const handleSelectChange = (value: string) => {
         const selectedOrg = organismes.find(org => String(org.id) === value);
-        if (selectedOrg) {
+        if (selectedOrg && selectedOrg.id) {
             setProjet({ ...projet, organisme_id: selectedOrg.id });
         }
     };
 
-    /*  const handleFileDrop = (acceptedFiles: File[]) => {
-         if (acceptedFiles.length > 0) {
-             setProjet({ ...projet, filePath: acceptedFiles[0] });
-         }
-     };
-  */
     const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         const file = event.target.files?.[0];
         if (file) {
@@ -92,39 +96,47 @@ export default function CreatedProjet() {
             setError("Veuillez sélectionner un organisme");
             return;
         }
-        if (!projet.filePath) {
-            setError("Veuillez télécharger un fichier");
-            return;
-        }
         if (!projet.cloturevoter) {
             setError("Veuillez sélectionner une date de clôture");
             return;
         }
 
+        if (!id) {
+            setError("ID du projet manquant");
+            return;
+        }
+
         setIsLoading(true);
         try {
-            const save = await ajoutProject(projet);
-            console.log(save);
-            setSuccess("Projet créé avec succès !");
+            await updateProject(Number(id), projet);
+            setSuccess("Projet modifié avec succès !");
             setTimeout(() => {
                 navigate('/projets');
             }, 1500);
         } catch (error: any) {
-            console.error("Failed to add project", error);
-            setError(error?.response?.data?.message || "Erreur lors de la création du projet");
+            console.error("Failed to update project", error);
+            setError(error?.response?.data?.message || "Erreur lors de la modification du projet");
         } finally {
             setIsLoading(false);
         }
     };
 
+    if (isLoadingData) {
+        return (
+            <div className="flex items-center justify-center min-h-screen">
+                <div className="text-gray-600 dark:text-gray-400">Chargement...</div>
+            </div>
+        );
+    }
+
     return (
         <div>
             <PageMeta
-                title="Projet de lois | Save Project"
-                description="Save Project"
+                title="Projet de lois | Modifier Project"
+                description="Modifier Project"
             />
-            <PageBreadcrumb pageTitle="Projet" />
-            <ComponentCard title="Enrégistrement de projet de lois.">
+            <PageBreadcrumb pageTitle="Modifier le Projet" />
+            <ComponentCard title="Modification de projet de lois.">
                 <Form onSubmit={handleSubmit}>
                     {error && (
                         <div className="mb-4 p-3 text-sm text-red-600 bg-red-50 border border-red-200 rounded-lg dark:bg-red-900/20 dark:border-red-800 dark:text-red-400">
@@ -159,7 +171,6 @@ export default function CreatedProjet() {
                                 onChange={handleSelectChange}
                                 className="dark:bg-dark-900"
                             />
-
                         </div>
                         <div>
                             <DatePicker
@@ -176,16 +187,9 @@ export default function CreatedProjet() {
                         </div>
                     </div>
                     <div>
-                        <Label>Upload file</Label>
+                        <Label>Upload file (optionnel - laissez vide pour conserver le fichier actuel)</Label>
                         <FileInput onChange={handleFileChange} className="custom-class" />
                     </div>
-                    {/*  <div>
-                        <Label className="pb-3">Importer le fichier de Projet de Lois</Label>
-                        <DropzoneComponent
-                            value={projet.filePath}
-                            onChange={handleFileDrop}
-                        />
-                    </div> */}
                     <div className="flex justify-between mt-2">
                         <Button
                             size="sm"
@@ -202,11 +206,10 @@ export default function CreatedProjet() {
                             variant="primary"
                             disabled={isLoading}
                         >
-                            {isLoading ? "Enregistrement..." : "Enregistrer"}
+                            {isLoading ? "Modification..." : "Modifier"}
                         </Button>
                     </div>
                 </Form>
-
             </ComponentCard>
         </div>
     )

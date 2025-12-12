@@ -21,10 +21,20 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     // Load current user on mount
     useEffect(() => {
         const bootstrap = async () => {
+            const token = localStorage.getItem("token");
+            if (!token) {
+                setRefreshing(false);
+                return;
+            }
+
             try {
+                await Auth.getCsrfCookie();
                 const user = await Auth.fetchUser();
                 setUser(user);
             } catch (err) {
+                console.error("Erreur lors de la récupération de l'utilisateur:", err);
+                // Si le token est invalide, le supprimer pour éviter les boucles
+                localStorage.removeItem("token");
                 setUser(null);
             } finally {
                 setRefreshing(false);
@@ -39,7 +49,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
     };
 
-    const register = async (name: string, email: string, password: string, password_confirmation?: string) => {
+    const register = async (name: string, email: string, password: string) => {
         const user = await Auth.register(name, email, password);
         setUser(user);
     };

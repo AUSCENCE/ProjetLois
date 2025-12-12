@@ -29,11 +29,12 @@ const navItems: NavItem[] = [
   {
     icon: <GridIcon />,
     name: "Dashboard",
-    subItems: [
-      { name: "Projet de lois", path: "/projets" },
-      { name: "Enrégistre Projet de lois", path: "/projetsave" },
-      { name: "Voter Projet de lois", path: "/projetvote" },
-    ],
+    path: "/",
+  },
+  {
+    icon: <CalenderIcon />,
+    name: "Projets",
+    path: "/projets",
   },
   {
     icon: <CalenderIcon />,
@@ -42,7 +43,7 @@ const navItems: NavItem[] = [
   },
   {
     icon: <UserCircleIcon />,
-    name: "User Profile",
+    name: "Profile Utilisateur",
     path: "/profile",
   },
   /* 
@@ -363,7 +364,7 @@ const AppSidebar: React.FC = () => {
             </div>
           </div>
         </nav>
-        {/* {isExpanded || isHovered || isMobileOpen ? <SidebarWidget /> : null} */}
+        {isExpanded || isHovered || isMobileOpen ? <SidebarWidget /> : null}
       </div>
     </aside>
   );

@@ -17,18 +17,23 @@ export default function SignInForm() {
   const [password, setPassword] = useState("")
   const navigate = useNavigate();
   const [error, setError] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    setError(null);
+    setIsLoading(true);
+
     try {
-      e.preventDefault();
       await login(email, password);
       navigate("/");
     } catch (error: any) {
-      console.log(error)
-      setError("Échec de la connexion");
-
+      console.error("Erreur de connexion:", error);
+      const errorMessage = error?.response?.data?.message || "Email ou mot de passe incorrect";
+      setError(errorMessage);
+    } finally {
+      setIsLoading(false);
     }
-
   }
 
 
@@ -108,6 +113,11 @@ export default function SignInForm() {
             </div>
             <form onSubmit={handleSubmit}>
               <div className="space-y-6">
+                {error && (
+                  <div className="p-3 text-sm text-red-600 bg-red-50 border border-red-200 rounded-lg dark:bg-red-900/20 dark:border-red-800 dark:text-red-400">
+                    {error}
+                  </div>
+                )}
                 <div>
                   <Label>
                     Email <span className="text-error-500">*</span>{" "}
@@ -117,6 +127,7 @@ export default function SignInForm() {
                     placeholder="info@gmail.com"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
+                    disabled={isLoading}
                   />
                 </div>
                 <div>
@@ -129,6 +140,7 @@ export default function SignInForm() {
                       placeholder="Enter your password"
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
+                      disabled={isLoading}
                     />
                     <span
                       onClick={() => setShowPassword(!showPassword)}
@@ -157,8 +169,13 @@ export default function SignInForm() {
                   </Link>
                 </div>
                 <div>
-                  <Button className="w-full" type="submit" size="sm">
-                    Sign in
+                  <Button
+                    className="w-full"
+                    type="submit"
+                    size="sm"
+                    disabled={isLoading}
+                  >
+                    {isLoading ? "Connexion en cours..." : "Sign in"}
                   </Button>
                 </div>
               </div>

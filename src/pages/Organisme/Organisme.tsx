@@ -8,7 +8,7 @@ import Input from "../../components/form/input/InputField";
 import { Modal } from "../../components/ui/modal";
 import { useModal } from "../../hooks/useModal";
 import { useEffect, useState } from "react";
-import { ajoutOrganisme, getOrganismes } from "../../Api/organisme";
+import { ajoutOrganisme, getOrganismes, updateOrganisme } from "../../Api/organisme";
 import OrganismeType from "../../Types/Organisme";
 
 export default function Organisme() {
@@ -16,6 +16,7 @@ export default function Organisme() {
     const { isOpen, openModal, closeModal } = useModal();
     const [name, setName] = useState("");
     const [organismes, setOrganismes] = useState<OrganismeType[]>([]);
+    const [etatModal, setEtaModal] = useState<Boolean>(true)
 
     const fetchOrganismes = async () => {
         const result = await getOrganismes();
@@ -38,17 +39,39 @@ export default function Organisme() {
         setName("");
         fetchOrganismes();
     };
-    const handleEdit = (row: null) => {
-        console.log("Modif" + row)
+    const handleEdit = (row: OrganismeType) => {
+        setName(row.name);
+        setEtaModal(false);
+        console.log("Modif " + name);
+        openModal();
+
     }
 
-    const handleUpdate = (row: null) => {
-        console.log("update" + row)
+    const handleUpdate = async (row: OrganismeType, e) => {
+        e.preventDefault();
+        const newOrganisme = {
+            id: row.id,
+            name: name
+        };
+        setOrganisme(newOrganisme);
+        await updateOrganisme(organisme.id, organisme)
+        closeModal();
+        setName("");
+        setEtaModal(true);
+        fetchOrganismes();
 
     }
-    const handleDelete = (row: null) => {
+    const handleDelete = (row: OrganismeType) => {
         console.log("delete" + row)
 
+    }
+
+    const handleSubmit = () => {
+        if (etatModal) {
+            handleSave
+        } else {
+            handleUpdate
+        }
     }
 
     const columns = [
@@ -69,13 +92,12 @@ export default function Organisme() {
             />
             <PageBreadcrumb pageTitle="Organisme" />
             <div className="space-y-6">
-                <ComponentCard title="Organisme" actions={openModal}>
+                <ComponentCard title="Organisme" actions={openModal} nameAction="Créer">
                     <BasicTableOne
                         data={organismes}
                         columns={columns}
-                        defaultOnEdit={handleEdit}
                         defaultOnDelete={handleDelete}
-                        defaultOnModify={handleUpdate}
+                        defaultOnModify={handleEdit}
                     />
                 </ComponentCard>
             </div>
@@ -88,7 +110,7 @@ export default function Organisme() {
                             Organisme
                         </h4>
                     </div>
-                    <form className="flex flex-col" onSubmit={handleSave}>
+                    <form className="flex flex-col" onSubmit={() => { handleSubmit }}>
                         <div className="custom-scrollbar  px-2 pb-3">
 
                             <div className="">
@@ -108,12 +130,12 @@ export default function Organisme() {
                                 Fermer
                             </Button>
                             <Button size="sm" type="submit">
-                                Enregistrer
+                                {etatModal ? 'Enregistrer' : 'Modifier'}
                             </Button>
                         </div>
                     </form>
                 </div>
-            </Modal>
+            </Modal >
         </>
     );
 }
