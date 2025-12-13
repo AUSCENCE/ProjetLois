@@ -28,6 +28,8 @@ import Projets from "./pages/Projets";
 import CreatedProjet from "./pages/Projets/create";
 import EditProjet from "./pages/Projets/edit";
 import ShowProjet from "./pages/Projets/show";
+import ProjetsPromulgues from "./pages/Projets/promulgues";
+import ProjetsAVoter from "./pages/Projets/avoter";
 
 export default function App() {
   return (
@@ -46,6 +48,8 @@ export default function App() {
               {/* Projets - Routes spécifiques AVANT les routes dynamiques */}
               <Route path="/projets" element={<Projets />} />
               <Route path="/projets/create" element={<CreatedProjet />} />
+              <Route path="/projets/promulgues" element={<ProjetsPromulgues />} />
+              <Route path="/projets/avoter" element={<ProjetsAVoter />} />
               <Route path="/projets/edit/:id" element={<EditProjet />} />
               <Route path="/projets/:id" element={<ShowProjet />} />
 

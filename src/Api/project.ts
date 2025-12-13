@@ -3,7 +3,7 @@ import axios from 'axios';
 //import Swal from 'sweetalert2';
 
 // URL de base pour les API
-const API_URL = 'http://localhost:8000/api';
+const API_URL = import.meta.env.VITE_API_BASE_URL + '/api/';
 
 // Variable pour éviter plusieurs alertes simultanées
 let isSessionExpired = false;
@@ -124,7 +124,7 @@ export const updateProject = async (id: number, data: Projet) => {
             formData.append('cloturevoter', data.cloturevoter.toISOString().split('T')[0]);
         }
 
-        const response = await api.put(`/projet/update/${id}`, formData, {
+        const response = await api.post(`/projet/update/${id}`, formData, {
             headers: {
                 'Content-Type': 'multipart/form-data',
             }
@@ -159,3 +159,32 @@ export const voteProject = async (id: number, vote: 'VALIDER' | 'REJETER', comme
     }
 }
 
+export const getPromulgatedProjects = async () => {
+    try {
+        const response = await api.get("/projet/promuleguer");
+        return response.data.datas;
+    } catch (error) {
+        console.error("Erreur lors de la récupération des projets promulgués:", error);
+        throw error;
+    }
+};
+
+export const getNonPromulgatedProjects = async () => {
+    try {
+        const response = await api.get("/projet/nonPromulegue");
+        return response.data.datas;
+    } catch (error) {
+        console.error("Erreur lors de la récupération des projets non promulgués:", error);
+        throw error;
+    }
+};
+
+export const getProjectsToVote = async () => {
+    try {
+        const response = await api.get("/projet/avoter");
+        return response.data.datas;
+    } catch (error) {
+        console.error("Erreur lors de la récupération des projets à voter:", error);
+        throw error;
+    }
+};

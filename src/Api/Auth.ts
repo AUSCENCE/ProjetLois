@@ -3,7 +3,7 @@ import axios from "axios";
 import User from "../Types/User";
 
 // --- CONFIGURATION BACKEND ---
-const API_URL = "http://localhost:8000";
+const API_URL = import.meta.env.VITE_API_BASE_URL || "http://localhost:8000";
 
 const api = axios.create({
   baseURL: API_URL,
@@ -47,7 +47,7 @@ export const register = async (
   email: string,
   password: string
 ): Promise<User> => {
-  const response = await api.post("/user/register", {
+  const response = await api.post("/api/user/register", {
     name,
     email,
     password,

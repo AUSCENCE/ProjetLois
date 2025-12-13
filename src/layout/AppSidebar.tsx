@@ -34,7 +34,11 @@ const navItems: NavItem[] = [
   {
     icon: <CalenderIcon />,
     name: "Projets",
-    path: "/projets",
+    subItems: [
+      { name: "Tous les projets", path: "/projets" },
+      { name: "À voter", path: "/projets/avoter" },
+      { name: "Promulgués", path: "/projets/promulgues" },
+    ],
   },
   {
     icon: <CalenderIcon />,

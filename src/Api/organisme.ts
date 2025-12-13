@@ -4,7 +4,7 @@ import Organisme from '../Types/Organisme';
 //import Swal from 'sweetalert2';
 
 // URL de base pour les API
-const API_URL = 'http://localhost:8000/api';
+const API_URL = import.meta.env.VITE_API_BASE_URL + '/api/';
 
 // Variable pour éviter plusieurs alertes simultanées
 let isSessionExpired = false;
