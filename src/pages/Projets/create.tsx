@@ -3,7 +3,6 @@ import ComponentCard from "../../components/common/ComponentCard";
 import PageBreadcrumb from "../../components/common/PageBreadCrumb";
 import PageMeta from "../../components/common/PageMeta";
 import DatePicker from "../../components/form/date-picker";
-import DropzoneComponent from "../../components/form/form-elements/DropZone";
 import Input from "../../components/form/input/InputField";
 import Label from "../../components/form/Label";
 import Select from "../../components/form/Select";
@@ -61,7 +60,7 @@ export default function CreatedProjet() {
     const handleSelectChange = (value: string) => {
         const selectedOrg = organismes.find(org => String(org.id) === value);
         if (selectedOrg) {
-            setProjet({ ...projet, organisme_id: selectedOrg.id });
+            setProjet({ ...projet, organisme_id: selectedOrg.id || 0 });
         }
     };
 

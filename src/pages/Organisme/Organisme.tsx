@@ -25,53 +25,42 @@ export default function Organisme() {
     };
 
 
-    const handleSave = async (e) => {
-        e.preventDefault();
-        const newOrganisme = {
-            name: name
-        };
-        setOrganisme(newOrganisme);
-        await ajoutOrganisme(newOrganisme);
-
-        // Handle save logic here
-        console.log("Saving changes...");
-        closeModal();
-        setName("");
-        fetchOrganismes();
-    };
     const handleEdit = (row: OrganismeType) => {
+        setOrganisme(row);
         setName(row.name);
         setEtaModal(false);
-        console.log("Modif " + name);
+        console.log("Modif " + row.name);
         openModal();
-
     }
 
-    const handleUpdate = async (row: OrganismeType, e) => {
+    const handleDelete = (row: OrganismeType) => {
+        console.log("delete" + row.name)
+    }
+
+    const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        const newOrganisme = {
-            id: row.id,
-            name: name
-        };
-        setOrganisme(newOrganisme);
-        await updateOrganisme(organisme.id, organisme)
+
+        if (etatModal) {
+            // Create
+            const newOrganisme = {
+                name: name
+            };
+            await ajoutOrganisme(newOrganisme);
+        } else {
+            // Update
+            if (!organisme || !organisme.id) return;
+            const updatedOrganisme = {
+                id: organisme.id,
+                name: name
+            };
+            await updateOrganisme(organisme.id, updatedOrganisme)
+        }
+
+        console.log("Saving changes...");
         closeModal();
         setName("");
         setEtaModal(true);
         fetchOrganismes();
-
-    }
-    const handleDelete = (row: OrganismeType) => {
-        console.log("delete" + row)
-
-    }
-
-    const handleSubmit = () => {
-        if (etatModal) {
-            handleSave
-        } else {
-            handleUpdate
-        }
     }
 
     const columns = [
@@ -110,7 +99,7 @@ export default function Organisme() {
                             Organisme
                         </h4>
                     </div>
-                    <form className="flex flex-col" onSubmit={() => { handleSubmit }}>
+                    <form className="flex flex-col" onSubmit={handleSubmit}>
                         <div className="custom-scrollbar  px-2 pb-3">
 
                             <div className="">

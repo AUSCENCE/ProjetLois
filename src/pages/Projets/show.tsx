@@ -7,14 +7,14 @@ import Button from "../../components/ui/button/Button";
 import { Modal } from "../../components/ui/modal";
 import { useModal } from "../../hooks/useModal";
 import { useEffect, useState } from "react";
-import { useNavigate, useParams } from "react-router";
+import { useParams } from "react-router";
 import { getProject, voteProject } from "../../Api/project";
 import ProjetType from "../../Types/Projet";
 
 export default function ShowProjet() {
     const { isOpen, openModal, closeModal } = useModal();
     const { id } = useParams<{ id: string }>();
-    const navigate = useNavigate();
+
     const [projet, setProjet] = useState<ProjetType | null>(null);
     const [isLoading, setIsLoading] = useState(true);
     const [commentaire, setCommentaire] = useState("");
@@ -171,7 +171,7 @@ export default function ShowProjet() {
                                     <Label>Commentaire (optionnel)</Label>
                                     <TextArea
                                         value={commentaire}
-                                        onChange={(e) => setCommentaire(e.target.value)}
+                                        onChange={(val) => setCommentaire(val)}
                                         placeholder="Ajoutez un commentaire sur votre vote..."
                                         disabled={isVoting}
                                     />
