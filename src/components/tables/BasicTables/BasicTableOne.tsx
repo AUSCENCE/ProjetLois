@@ -102,9 +102,8 @@ export default function BasicTableOne<T>({
                               startIcon={<FaEye className="size-3" />}
                               onClick={() => column.onEdit?.(row)}
                               className="hover:bg-blue-400 text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300"
-                            >
-
-                            </Button>
+                              children={null}
+                            />
                           )}
                           {column.onModify && (
                             <Button
@@ -113,9 +112,8 @@ export default function BasicTableOne<T>({
                               startIcon={<FaEdit className="size-3" />}
                               onClick={() => column.onModify?.(row)}
                               className=" bg-yellow-600  hover:bg-yellow-500  text-white hover:text-yellow-800  dark:text-yellow-400 dark:hover:text-yellow-300"
-                            >
-
-                            </Button>
+                              children={null}
+                            />
                           )}
                           {column.onDelete && (
                             <Button
