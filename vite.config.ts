@@ -17,6 +17,9 @@ export default defineConfig({
   ],
   server: {
     // Vite démarrera sur le port 3000
-    port: 3000, 
+    port: 3000,
+  },
+  build: {
+    outDir: "build",
   }
 });
