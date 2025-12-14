@@ -1,7 +1,7 @@
 import { ReactNode } from "react";
 
 interface ButtonProps {
-  children: ReactNode; // Button text or content
+  children?: ReactNode; // Button text or content
   size?: "sm" | "md" | "xs"; // Button size
   variant?: "primary" | "outline" | "success" | "error" | "warning"; // Button variant
   startIcon?: ReactNode; // Icon before the text
@@ -27,6 +27,7 @@ const Button: React.FC<ButtonProps> = ({
   const sizeClasses = {
     sm: "px-4 py-3 text-sm",
     md: "px-5 py-3.5 text-sm",
+    xs: "px-2 py-1.5 text-xs",
   };
 
   // Variant Classes
@@ -35,6 +36,12 @@ const Button: React.FC<ButtonProps> = ({
       "bg-brand-500 text-white shadow-theme-xs hover:bg-brand-600 disabled:bg-brand-300",
     outline:
       "bg-white text-gray-700 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 dark:bg-gray-800 dark:text-gray-400 dark:ring-gray-700 dark:hover:bg-white/[0.03] dark:hover:text-gray-300",
+    success:
+      "bg-green-500 text-white shadow-theme-xs hover:bg-green-600 disabled:bg-green-300",
+    error:
+      "bg-red-500 text-white shadow-theme-xs hover:bg-red-600 disabled:bg-red-300",
+    warning:
+      "bg-orange-500 text-white shadow-theme-xs hover:bg-orange-600 disabled:bg-orange-300",
   };
 
   return (

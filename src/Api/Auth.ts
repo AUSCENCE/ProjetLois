@@ -34,7 +34,7 @@ export const getCsrfCookie = async () => {
     console.log('OK');
     await api.get('/sanctum/csrf-cookie');
   } catch (error) {
-    console.error("Erreur lors de l'initialisation du cookie CSRF :", error.response?.data?.message || error.message);
+    console.error("Erreur lors de l'initialisation du cookie CSRF :", (error as any).response?.data?.message || (error as any).message);
     throw error;
   }
 };

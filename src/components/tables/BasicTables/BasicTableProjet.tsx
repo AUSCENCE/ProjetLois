@@ -9,7 +9,7 @@ import Badge from "../../ui/badge/Badge";
 import React from "react";
 import Button from "../../ui/button/Button";
 import { FaEdit, FaEye, FaTrash } from "react-icons/fa";
-import { BoxCubeIcon, BoxIcon, EyeIcon, InfoIcon, TrashBinIcon } from "../../../icons";
+import { EyeIcon } from "../../../icons";
 
 // Define a generic Column interface
 interface Column<T> {
@@ -112,7 +112,7 @@ export default function BasicTableProjet<T>({
                           {column.onModify && (
                             <Button
                               size="sm"
-                              variant="danger"
+                              variant="error"
                               startIcon={<FaEdit className="size-3" />}
                               onClick={() => column.onModify?.(row)}
                               className=" bg-yellow-600  hover:bg-yellow-500  text-white hover:text-yellow-800  dark:text-yellow-400 dark:hover:text-yellow-300"
@@ -123,7 +123,7 @@ export default function BasicTableProjet<T>({
                           {column.onDelete && (
                             <Button
                               size="sm"
-                              variant="danger"
+                              variant="error"
                               startIcon={<FaTrash className="size-3" />}
                               onClick={() => column.onDelete?.(row)}
                               className="bg-red-600 text-white hover:text-red-800 dark:text-red-400 dark:hover:text-red-300 hover:bg-red-300"

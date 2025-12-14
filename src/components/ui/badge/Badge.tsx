@@ -33,6 +33,7 @@ const Badge: React.FC<BadgeProps> = ({
   const sizeStyles = {
     sm: "text-theme-xs", // Smaller padding and font size
     md: "text-sm", // Default padding and font size
+    xs: "text-[10px] px-1.5 py-0.5", // Extra small
   };
 
   // Define color styles for variants

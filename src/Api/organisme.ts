@@ -7,7 +7,7 @@ import Organisme from '../Types/Organisme';
 const API_URL = import.meta.env.VITE_API_BASE_URL + '/api/';
 
 // Variable pour éviter plusieurs alertes simultanées
-let isSessionExpired = false;
+
 
 // Créer une instance axios avec intercepteur pour ajouter le token
 const api = axios.create({
