@@ -4,7 +4,7 @@ import Organisme from '../Types/Organisme';
 //import Swal from 'sweetalert2';
 
 // URL de base pour les API
-const API_URL = import.meta.env.VITE_API_BASE_URL + '/api/';
+const API_URL = (import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000') + '/api/';
 
 // Variable pour éviter plusieurs alertes simultanées
 
@@ -60,7 +60,7 @@ export const ajoutOrganisme = async (data: Organisme) => {
     try {
 
         const response = await api.post("/organisme/store", data)
-        console.log(response.data.datas)
+
 
         return response.data.datas
 
@@ -73,7 +73,7 @@ export const ajoutOrganisme = async (data: Organisme) => {
 export const getOrganismes = async () => {
     try {
         const response = await api.get("/organisme");
-        console.log(response.data.datas)
+
 
         return response.data.datas;
 
@@ -85,7 +85,7 @@ export const getOrganismes = async () => {
 
 export const getOrganisme = async (id: number) => {
     try {
-        const response = await api.get(`/organisme/${id}`);
+        const response = await api.get(`/organisme/show/${id}`);
         return response.data.datas;
     } catch (error) {
         console.error("Erreur lors de la récupération de l'organisme:", error);
@@ -95,7 +95,7 @@ export const getOrganisme = async (id: number) => {
 
 export const updateOrganisme = async (id: number, data: Organisme) => {
     try {
-        const response = await api.put(`/organisme/${id}`, data);
+        const response = await api.put(`/organisme/update/${id}`, data);
         return response.data.datas;
     } catch (error) {
         console.error("Erreur lors de la mise à jour de l'organisme:", error);
@@ -105,7 +105,7 @@ export const updateOrganisme = async (id: number, data: Organisme) => {
 
 export const deleteOrganisme = async (id: number) => {
     try {
-        const response = await api.delete(`/organisme/${id}`);
+        const response = await api.delete(`/organisme/delete/${id}`);
         return response.data.datas;
     } catch (error) {
         console.error("Erreur lors de la suppression de l'organisme:", error);

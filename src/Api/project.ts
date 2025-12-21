@@ -3,7 +3,7 @@ import axios from 'axios';
 //import Swal from 'sweetalert2';
 
 // URL de base pour les API
-const API_URL = import.meta.env.VITE_API_BASE_URL + '/api/';
+const API_URL = (import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000') + '/api/';
 
 // Variable pour éviter plusieurs alertes simultanées
 
@@ -77,7 +77,7 @@ export const ajoutProject = async (data: Projet) => {
             }
         });
 
-        console.log("API Response:", response.data);
+        console.log
 
         return response.data.datas;
 
@@ -91,7 +91,7 @@ export const ajoutProject = async (data: Projet) => {
 export const getProjects = async () => {
     try {
         const response = await api.get("/projet");
-        console.log(response)
+
         return response.data.datas;
     } catch (error) {
         console.error("Erreur lors de la récupération des organismes:", error);
@@ -102,6 +102,16 @@ export const getProjects = async () => {
 export const getProject = async (id: number) => {
     try {
         const response = await api.get(`/projet/show/${id}`);
+        return response.data.datas;
+    } catch (error) {
+        console.error("Erreur lors de la récupération de l'organisme:", error);
+        throw error;
+    }
+};
+
+export const changeEtatProject = async (id: number) => {
+    try {
+        const response = await api.get(`/projet/changeEtat/${id}`);
         return response.data.datas;
     } catch (error) {
         console.error("Erreur lors de la récupération de l'organisme:", error);
@@ -148,8 +158,12 @@ export const deleteProject = async (id: number) => {
 
 export const voteProject = async (id: number, vote: 'VALIDER' | 'REJETER', commentaire?: string) => {
     try {
+        let voter = false;
+        if (vote === 'VALIDER') {
+            voter = true;
+        }
         const response = await api.post(`/projet/voter/${id}`, {
-            vote,
+            vote: voter,
             commentaire
         });
         return response.data.datas;

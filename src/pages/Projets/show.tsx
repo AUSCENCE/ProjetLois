@@ -10,8 +10,10 @@ import { useEffect, useState } from "react";
 import { useParams } from "react-router";
 import { getProject, voteProject } from "../../Api/project";
 import ProjetType from "../../Types/Projet";
+import { useAuth } from "../../context/AuthContext";
 
 export default function ShowProjet() {
+    const { user } = useAuth();
     const { isOpen, openModal, closeModal } = useModal();
     const { id } = useParams<{ id: string }>();
 
@@ -22,6 +24,11 @@ export default function ShowProjet() {
     const [voteType, setVoteType] = useState<'VALIDER' | 'REJETER' | null>(null);
     const [error, setError] = useState<string | null>(null);
     const [success, setSuccess] = useState<string | null>(null);
+
+    useEffect(() => {
+        console.log("Current user in ShowProjet:", user);
+
+    }, [user]);
 
     useEffect(() => {
         const fetchProjet = async () => {
@@ -53,8 +60,9 @@ export default function ShowProjet() {
         setError(null);
 
         try {
-            await voteProject(Number(id), voteType, commentaire);
-            setSuccess(`Vote "${voteType}" enregistré avec succès !`);
+            const response = await voteProject(Number(id), voteType, commentaire);
+            console.log(response);
+            setSuccess(response.data.message);
             setCommentaire("");
             closeModal();
 
@@ -88,7 +96,7 @@ export default function ShowProjet() {
     const pdfUrl = projet.filePath
         ? (projet.filePath.startsWith('http')
             ? projet.filePath
-            : `http://localhost:8000/storage/${projet.filePath}`)
+            : (import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000') + `/storage/${projet.filePath}`)
         : null;
 
     return (
@@ -126,6 +134,14 @@ export default function ShowProjet() {
                 )}
             </div>
 
+            {/* 
+                Debug Role info - can be removed once verified 
+                <div className="mb-4 p-2 bg-gray-100 rounded text-xs text-gray-600 dark:bg-gray-800 dark:text-gray-400">
+                    Rôle actuel : <span className="font-bold">{user?.datas?.role}</span> |
+                    Peut voter : <span className="font-bold">{(user?.datas?.role === "depute" || user?.datas?.role?.toLowerCase() === "député") ? "OUI" : "NON"}</span>
+                </div>
+            */}
+
             {success && (
                 <div className="mb-4 p-3 text-sm text-green-600 bg-green-50 border border-green-200 rounded-lg dark:bg-green-900/20 dark:border-green-800 dark:text-green-400">
                     {success}
@@ -135,8 +151,8 @@ export default function ShowProjet() {
             <div className="space-y-6">
                 <ComponentCard
                     title="Aperçu du document"
-                    actions={() => handleVoteClick('VALIDER')}
-                    nameAction="Voter"
+                    actions={(projet.avoter && (user?.datas?.role == "depute" || user?.datas?.role == "député")) ? () => handleVoteClick('VALIDER') : undefined}
+                    nameAction={(projet.avoter && (user?.datas?.role == "depute" || user?.datas?.role == "député")) ? "Voter" : undefined}
                 >
                     {pdfUrl ? (
                         <iframe

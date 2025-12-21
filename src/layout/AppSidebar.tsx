@@ -44,6 +44,11 @@ const navItems: NavItem[] = [
     name: "Profile Utilisateur",
     path: "/profile",
   },
+  {
+    icon: <UserCircleIcon />,
+    name: "Utilisateurs",
+    path: "/users",
+  },
   /* 
   {
     name: "Forms",

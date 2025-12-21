@@ -30,6 +30,7 @@ import EditProjet from "./pages/Projets/edit";
 import ShowProjet from "./pages/Projets/show";
 import ProjetsPromulgues from "./pages/Projets/promulgues";
 import ProjetsAVoter from "./pages/Projets/avoter";
+import Users from "./pages/Users";
 
 export default function App() {
   return (
@@ -57,6 +58,9 @@ export default function App() {
               <Route path="/organisme" element={<Organisme />} />
               <Route path="/organisme/create" element={<CreateOrganisme />} />
               <Route path="/organisme/edit/:id" element={<EditOrganisme />} />
+
+              {/* Utilisateurs */}
+              <Route path="/users" element={<Users />} />
 
               <Route path="/blank" element={<Blank />} />
 

@@ -10,6 +10,8 @@ import React from "react";
 import Button from "../../ui/button/Button";
 import { FaEdit, FaEye, FaTrash } from "react-icons/fa";
 import { EyeIcon } from "../../../icons";
+import { changeEtatProject } from "../../../Api/project";
+import { useAuth } from "../../../context/AuthContext";
 
 // Define a generic Column interface
 interface Column<T> {
@@ -41,6 +43,7 @@ export default function BasicTableProjet<T>({
   defaultOnDelete,
   defaultOnModify,
 }: BasicTableOneProps<T>) {
+  const { user } = useAuth();
   // Create a default action column if any default action handlers are provided
   const defaultActionColumn: Column<T> | null =
     defaultOnEdit || defaultOnDelete || defaultOnModify
@@ -48,7 +51,7 @@ export default function BasicTableProjet<T>({
         header: "Actions",
         isActionColumn: true,
         onEdit: defaultOnEdit,
-        onDelete: defaultOnDelete,
+        onDelete: (user as any)?.datas?.role === 'admin' ? defaultOnDelete : undefined,
         onModify: defaultOnModify,
         className: "text-center", // Center align buttons in the default action column
         headerClassName: "px-5 py-3 font-medium text-gray-500 text-theme-sm dark:text-gray-400 text-center", // Center align header for the default action column
@@ -59,6 +62,24 @@ export default function BasicTableProjet<T>({
   const finalColumns = defaultActionColumn
     ? [...columns, defaultActionColumn]
     : columns;
+
+  const handleEtatAVote = async (projet: any) => {
+    if ((user as any)?.datas?.role !== 'admin') {
+      alert("Seuls les administrateurs peuvent changer cet état.");
+      return;
+    }
+    if (projet.etat) {
+      alert("Impossible de modifier l'état d'un projet déjà promulgué.");
+      return;
+    }
+    try {
+      await changeEtatProject(projet.id);
+      alert("Etat du projet modifié avec succès");
+      window.location.reload();
+    } catch (error) {
+      alert("Une erreur est survenue lors de la modification de l'état");
+    }
+  };
 
   return (
     <div className="overflow-hidden rounded-xl border border-gray-200 bg-white dark:border-white/[0.05] dark:bg-white/[0.03]">
@@ -120,7 +141,7 @@ export default function BasicTableProjet<T>({
 
                             </Button>
                           )}
-                          {column.onDelete && (
+                          {column.onDelete && (user as any)?.datas?.role === 'admin' && (
                             <Button
                               size="sm"
                               variant="error"
@@ -136,13 +157,23 @@ export default function BasicTableProjet<T>({
                           if (column.cell) return column.cell(row);
                           if (!column.accessorKey) return null;
 
-                          const value = row[column.accessorKey];
+                          const value = row[column.accessorKey as keyof T];
 
                           if (column.accessorKey === 'etat') {
                             return value ? <Badge color="success" size="xs">Promulgué</Badge> : <Badge color="error" size="xs">En Attente</Badge>;
                           }
                           if (column.accessorKey === 'avoter') {
-                            return value ? <Badge color="success" size="xs">Oui</Badge> : <Badge color="error" size="xs">Non</Badge>;
+                            return (
+                              <button
+                                type="button"
+                                onClick={((user as any)?.datas?.role === 'admin' && !(row as any).etat) ? () => handleEtatAVote(row as any) : undefined}
+                                className={((user as any)?.datas?.role !== 'admin' || (row as any).etat) ? "cursor-default" : ""}
+                              >
+                                <Badge color={value ? "success" : "error"} size="xs">
+                                  {value ? "Oui" : "Non"}
+                                </Badge>
+                              </button>
+                            );
                           }
                           if (column.accessorKey === 'organisme') {
                             return (value as any).name;
@@ -153,7 +184,7 @@ export default function BasicTableProjet<T>({
 
                             const fullUrl = filePath.startsWith('http')
                               ? filePath
-                              : `http://localhost:8000/storage/${filePath.startsWith('/') ? '' : '/'}${filePath}`;
+                              : (import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000') + `/storage/${filePath.startsWith('/') ? '' : '/'}${filePath}`;
 
                             return (
                               <a

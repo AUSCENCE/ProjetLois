@@ -31,7 +31,7 @@ api.interceptors.request.use((config) => {
 // Fonction pour initialiser le cookie CSRF
 export const getCsrfCookie = async () => {
   try {
-    console.log('OK');
+
     await api.get('/sanctum/csrf-cookie');
   } catch (error) {
     const err = error as any;
@@ -73,7 +73,7 @@ export const login = async (
     email,
     password,
   });
-  console.log(response);
+  ;
   const token = response.data.datas.token;
   localStorage.setItem("token", token);
   return response.data.datas.user;
