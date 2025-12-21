@@ -151,8 +151,8 @@ export default function ShowProjet() {
             <div className="space-y-6">
                 <ComponentCard
                     title="Aperçu du document"
-                    actions={(projet.avoter && (user?.datas?.role == "depute" || user?.datas?.role == "député")) ? () => handleVoteClick('VALIDER') : undefined}
-                    nameAction={(projet.avoter && (user?.datas?.role == "depute" || user?.datas?.role == "député")) ? "Voter" : undefined}
+                    actions={(projet.avoter && (user?.role == "depute" || user?.role == "député")) ? () => handleVoteClick('VALIDER') : undefined}
+                    nameAction={(projet.avoter && (user?.role == "depute" || user?.role == "député")) ? "Voter" : undefined}
                 >
                     {pdfUrl ? (
                         <iframe

@@ -9,6 +9,7 @@ interface User {
     country?: string;
     city?: string;
     avatar?: string;
+    datas?: any;
 }
 
 export default User;

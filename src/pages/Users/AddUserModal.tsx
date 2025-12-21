@@ -46,7 +46,7 @@ export default function AddUserModal({ isOpen, onClose, onSuccess }: AddUserModa
             // Utiliser generatedPass directement car setPassword est asynchrone
             const data = await createUser({ name, email, password: generatedPass, role });
             // Si le backend ne renvoie pas le mot de passe, on utilise celui qu'on a généré
-            onSuccess(data, data.password || generatedPass);
+            onSuccess(data.user, data.password || generatedPass);
 
             setName("");
             setEmail("");
